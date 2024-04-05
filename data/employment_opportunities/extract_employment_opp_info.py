@@ -72,7 +72,6 @@ q1_payroll = np.zeros(len(neighborhood_names))
 orig_file = open("CBP2021.CB2100CBP-Data.txt", 'r')
 
 header = orig_file.readline().split('\t')
-print(header)
 
 zip_idx = header.index("NAME")
 emp_size_idx = header.index("EMPSZES_LABEL")
@@ -95,6 +94,7 @@ while(orig_line):
         try:
             neigh_idx = neighborhood_names.index(zip_neighborhoods[orig_split[zip_idx][5:10]])
         except:
+            # not one of our zipcodes
             orig_line = orig_file.readline()
             continue
 
@@ -110,10 +110,37 @@ for zipcode in zip_neighborhoods:
     if zipcode not in seen_zip:
         print("Missing", zipcode)
 
-# write to CSV
+orig_file.close()
+
+## calculate population sizes to normalize data
+
+population = np.zeros(len(neighborhood_names))
+census_file = open("DECENNIALDHC2020.P1-Data.txt", 'r')
+
+census_line = census_file.readline()
+census_line = census_file.readline()
+census_line = census_file.readline()
+
+while(census_line):
+    census_split = census_line.split()
+
+    try:
+        neigh_idx = neighborhood_names.index(zip_neighborhoods[census_split[2]])
+    except:
+        # not one of our zipcodes
+        census_line = census_file.readline()
+        continue
+
+    population[neigh_idx] += int(census_split[3])
+
+    census_line = census_file.readline()
+
+census_file.close()
+
+# save results to file
 out = open("parsed_employment_data.txt", 'w')
-out.write("NEIGHBORHOOD\tNUM_EST\tNUM_EMP\tPAY_ANN\tPAY_QTR1\n")
+out.write("NEIGHBORHOOD\tNUM_EST\tNUM_EMP\tPAY_ANN\tPAY_QTR1\tPOP\tNORM_EST\tNORM_EMP\tNORM_PAY_ANN\tNORM_PAY_QTR1\n")
 for i in range(len(neighborhood_names)):
-    out.write(neighborhood_names[i] + '\t' + str(int(num_establishments[i])) + '\t' + str(int(num_employees[i])) + '\t' + str(int(ann_payroll[i])) + '\t' + str(int(q1_payroll[i])) + '\n')
+    out.write(neighborhood_names[i] + '\t' + str(int(num_establishments[i])) + '\t' + str(int(num_employees[i])) + '\t' + str(int(ann_payroll[i])) + '\t' + str(int(q1_payroll[i])) + '\t' + str(int(population[i])) + '\t' + str(num_establishments[i]/population[i]) + '\t' + str(num_employees[i]/population[i]) + '\t' + str(ann_payroll[i]/population[i]) + '\t' + str(q1_payroll[i]/population[i]) + '\n')
 
 out.close()
