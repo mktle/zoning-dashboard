@@ -53,6 +53,13 @@
 
     });
 
+    function handleRentEnter() {
+        // Store the current value of the rent slider
+        const rentValue = value;
+        // Make rent slider disappear
+        value = null;
+    }
+
     // onDestroy(() => {
     //     map.remove();
     // });
@@ -63,106 +70,26 @@
     <div class="map" bind:this={mapContainer} />
 </div>
 
+<div class="slider-container">
+    {#if value !== null}
+        <Slider value={value} />
+        <button on:click={handleRentEnter}>Enter</button>
+    {/if}
+</div>
+
 <style>
     .map {
         position: absolute;
         width: 100%;
         height: 75%;
     }
+
+    .slider-container {
+        position: absolute;
+        bottom: 20px;
+        left: 65%;
+        z-index: 1000;
+    }
 </style>
 
-<Slider value={value}> </Slider>
-
-<!-- <script>
-	export let value = 2000;
-</script>
-<input type=range bind:value={value}>
-<span>{ value }</span>
-<style>
-	span {
-		display: inline-block;
-		padding: 0 .4em;
-		border-radius: .3em;
-		background: oklch(95% 2% 200);
-	}
-</style> -->
-
-<!-- <script>
-	import * as d3 from 'd3';
-	import {onMount} from 'svelte';
-	
-	let data = [];
-	onMount(async function() {
-        data = await d3.csv('http://localhost:5173/src/routes/Rent_averages_BHA.csv', (d) => ({
-		// data = await d3.csv('https://github.com/mktle/zoning-dashboard/blob/main/data/rent_data/Rent_averages_BHA.csv', (d) => ({
-			...d,
-			zip: +d.ZIP,
-			avg_bed: +d.avg_per_bed,
-			city: +d.City
-		}));
-		console.log(data);
-	});
-
-    let maxPrice = 3000;
-    let minPrice = 0;
-    let currentPrice = 1500;
-    let rentalPrices = data.avg_per_bed;
-    
-    const updatePrice = (event) => {
-        current_price = parseFloat(event.target.value);
-    };
-</script>
-<div style="display: flex; align-items: center;">
-    <input type="range" min={minPrice} max={maxPrice} value={currentPrice} on:input={updatePrice}/>
-    <span style="margin-center: 10px;">${currentPrice}</span>
-</div> -->
-<!-- {#each rentalPrices as price}
-  <div class="bar" style="width: 2px; height: {Math.min(price, currentPrice) * 10}px; background: blue;"></div>
-{/each} -->
-<!-- <style>
-    .bar {
-        float: left;
-        margin: 0 1px;
-    }
-</style> -->
-
-<!-- <script>
-	import * as d3 from 'd3';
-	import {onMount} from 'svelte';
-	
-	let data = [];
-	onMount(async function() {
-		data = await d3.csv('https://vega.github.io/vega-datasets/data/gapminder-health-income.csv', (d) => ({
-			...d,
-			income: +d.income,
-			health: +d.health,
-			population: +d.population
-		}));
-		console.log(data);
-	});
-	
-	$: xScale = d3.scaleLinear()
-		.domain([0, d3.max(data, (d) => d.health)])
-		.range([0, 400]);
-	
-	$: colorScale = d3.scaleOrdinal()
-		.domain(data.map(d => d.region))
-		.range(d3.schemeTableau10)
-</script>
-
-{#each data as d}
-	<div class="bar" style="width: {xScale(d.health)}px; background: {colorScale(d.region)}">
-		{d.country}: {d.health}
-	</div>
-{/each}
-
-<style>
-	.bar {
-		background: steelblue;
-		padding: 3px;
-		margin: 1px;
-		text-align: right;
-		color: white;
-		width: 0px;
-	}
-</style> -->
+<!-- <Slider value={value}> </Slider> -->
