@@ -71,7 +71,7 @@
     }
 </style>
 
-<Slider value={value}></Slider>
+<Slider value={value}> </Slider>
 
 <!-- <script>
 	export let value = 2000;
