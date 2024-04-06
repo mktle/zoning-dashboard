@@ -1,3 +1,5 @@
+@import url("$lib/global.css")
+
 <h1>FP2 interactive map</h1>
 <p> </p>
 
@@ -10,7 +12,7 @@
     import Slider from './rent_slider.svelte';
     let value = 1500;
 
-    import 'mapbox-gl/dist/mapbox-gl.css';
+    import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
     import mapboxgl from 'mapbox-gl';
     // import { Map } from "mapbox-gl";
     import { onMount, onDestroy } from "svelte";
@@ -36,7 +38,10 @@
         map.on('load', () => {
             map.addSource('demographics', {
                 type: 'geojson',
-                data: 'http://localhost:5173/src/routes/Boston_Neighborhoods.geojson'
+                // data: 'http://localhost:5173/src/routes/Boston_Neighborhoods.geojson'
+                // data: 'https://github.com/mktle/zoning-dashboard/blob/main/svelte_fp2/src/routes/Boston_Neighborhoods.geojson'
+                data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/src/routes/Boston_Neighborhoods.geojson'
+                // data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/data/geographic/mapc_municipalities.geojson'
             });
             map.addLayer(
                 {

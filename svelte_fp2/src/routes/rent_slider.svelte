@@ -10,9 +10,7 @@
 
 	let rentData = []
 	onMount(async function() {
-		rentData = await d3.csv("http://localhost:5173/src/routes/Rent_averages_BHA.csv", (d) => ({
-		// CORS error when using a public https link. Maybe works once we publish/host on github
-		// data = await d3.csv("https://github.com/mktle/zoning-dashboard/blob/main/data/rent_data/Rent_averages_BHA.csv", (d) => ({
+		rentData = await d3.csv("https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/src/routes/Rent_averages_BHA.csv", (d) => ({
 			...d,
 			Zip: +d.Zip,
 			avg_per_bed: +d.avg_per_bed,
