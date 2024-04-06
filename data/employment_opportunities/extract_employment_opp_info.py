@@ -139,8 +139,8 @@ census_file.close()
 
 # save results to file
 out = open("parsed_employment_data.txt", 'w')
-out.write("NEIGHBORHOOD\tNUM_EST\tNUM_EMP\tPAY_ANN\tPAY_QTR1\tPOP\tNORM_EST\tNORM_EMP\tNORM_PAY_ANN\tNORM_PAY_QTR1\n")
+out.write("NEIGHBORHOOD\tNUM_EST\tNUM_EMP\tPAY_ANN\tPAY_QTR1\tPOP\tNORM_EST\tNORM_EMP\tNORM_PAY_ANN\tNORM_PAY_QTR1\tANN_PAY_DIV_EMP\n")
 for i in range(len(neighborhood_names)):
-    out.write(neighborhood_names[i] + '\t' + str(int(num_establishments[i])) + '\t' + str(int(num_employees[i])) + '\t' + str(int(ann_payroll[i])) + '\t' + str(int(q1_payroll[i])) + '\t' + str(int(population[i])) + '\t' + str(num_establishments[i]/population[i]) + '\t' + str(num_employees[i]/population[i]) + '\t' + str(ann_payroll[i]/population[i]) + '\t' + str(q1_payroll[i]/population[i]) + '\n')
+    out.write(neighborhood_names[i] + '\t' + str(int(num_establishments[i])) + '\t' + str(int(num_employees[i])) + '\t' + str(int(ann_payroll[i])) + '\t' + str(int(q1_payroll[i])) + '\t' + str(int(population[i])) + '\t' + str(num_establishments[i]/population[i]) + '\t' + str(num_employees[i]/population[i]) + '\t' + str(ann_payroll[i]/population[i]) + '\t' + str(q1_payroll[i]/population[i]) + '\t' + str(ann_payroll[i]/num_employees[i]) + '\n')
 
 out.close()
