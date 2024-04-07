@@ -1,5 +1,3 @@
-@import url("$lib/global.css")
-
 <h1>FP2 interactive map</h1>
 <p> </p>
 
@@ -9,15 +7,12 @@
 </svelte:head>
 
 <script>
-    import Slider from './rent_slider.svelte';
-    let value = 1500;
-
     import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
     import mapboxgl from 'mapbox-gl';
     // import { Map } from "mapbox-gl";
-    import { onMount, onDestroy } from "svelte";
-    const accessToken = 'pk.eyJ1IjoiZXB0eXNpbmdlciIsImEiOiJjbHVoanlneWIycm14MmxvZTh2Y3VhYXFkIn0.lkhHKBe-C2_I9v2J-jJ2hg'; // Replace with your token
-
+    import { onMount } from "svelte";
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXB0eXNpbmdlciIsImEiOiJjbHVoanlneWIycm14MmxvZTh2Y3VhYXFkIn0.lkhHKBe-C2_I9v2J-jJ2hg';
+    const accessToken = 'pk.eyJ1IjoiZXB0eXNpbmdlciIsImEiOiJjbHVoanlneWIycm14MmxvZTh2Y3VhYXFkIn0.lkhHKBe-C2_I9v2J-jJ2hg';
     let map;
     let mapContainer;
     let lng, lat, zoom;
@@ -25,7 +20,7 @@
     lat = 42.315;
     zoom = 11;
 
-    onMount(() => {
+    onMount(async () => {
         const initialState = { lng: lng, lat: lat, zoom: zoom };
         map = new mapboxgl.Map({
             container: mapContainer,
@@ -34,40 +29,52 @@
             center: [initialState.lng, initialState.lat],
             zoom: initialState.zoom,
         });
+        await new Promise(resolve => map.on("load", resolve));
 
-        map.on('load', () => {
-            map.addSource('demographics', {
-                type: 'geojson',
-                // data: 'http://localhost:5173/src/routes/Boston_Neighborhoods.geojson'
-                // data: 'https://github.com/mktle/zoning-dashboard/blob/main/svelte_fp2/src/routes/Boston_Neighborhoods.geojson'
-                data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/src/routes/Boston_Neighborhoods.geojson'
-                // data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/data/geographic/mapc_municipalities.geojson'
-            });
-            map.addLayer(
-                {
-                    'id': 'demographics-fill',
-                    'source':'demographics',
-                    'type': 'fill',
-                    'layout': {},
-                    'paint': {
-                        'fill-color': "hsla(135, 100%, 45%, 0.38)"
-                    }
-                }
-            )
+        map.addSource("Boston_Cambridge_Rent", {
+            type: 'geojson',
+            data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/data/geographic/Boston_Cambridge_rent.geojson'
         });
-
+        
+        map.addLayer({
+            'id': 'boston_cambridge_rent',
+            'source': 'Boston_Cambridge_Rent',
+            'type': 'fill',
+            'paint': {
+                'fill-color': "hsla(135, 100%, 45%, 0.38)"
+            },
+            'layout': {},
+        });
+        map.addLayer({
+            'id': 'boston_cambridge_rent_outline',
+            'source': 'Boston_Cambridge_Rent',
+            'type': 'line',
+            'paint': {
+                'line-color': "hsla(0, 100%, 0%, 0.5)"
+            },
+            'layout': {},
+        });
     });
 
-    function handleRentEnter() {
-        // Store the current value of the rent slider
-        const rentValue = value;
-        // Make rent slider disappear
-        value = null;
+    import Slider from './rent_slider.svelte';
+    let rentValue = 1500;
+    let selectedRent = 1500;
+    let maxRent = 3000;
+    let minRent = 0;
+    let rentFilter = -1;
+
+    $: {
+        selectedRent = rentValue;
     }
 
-    // onDestroy(() => {
-    //     map.remove();
-    // });
+    function handleRentEnter() {
+        console.log(rentValue)
+        // Store the current value of the rent slider
+        selectedRent = rentValue;
+        // Make rent slider disappear
+        rentValue = null;
+        console.log(selectedRent)
+    }
 
 </script>
 
@@ -75,17 +82,19 @@
     <div class="map" bind:this={mapContainer} />
 </div>
 
+
 <div class="slider-container">
-    {#if value !== null}
-        <Slider value={value} />
+    {#if rentValue !== null}
+        <Slider bind:rentValue={rentValue} />
         <button on:click={handleRentEnter}>Enter</button>
     {/if}
 </div>
 
 <style>
+    /* @import url("$lib/global.css"); */
     .map {
         position: absolute;
-        width: 100%;
+        width: 99%;
         height: 75%;
     }
 
@@ -96,5 +105,3 @@
         z-index: 1000;
     }
 </style>
-
-<!-- <Slider value={value}> </Slider> -->
