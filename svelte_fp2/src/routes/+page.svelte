@@ -7,6 +7,23 @@
 </svelte:head>
 
 <script>
+    import Slider from './rent_slider.svelte';
+    let rentValue = 1500;
+    let selectedRent = 3000;
+    let maxRent = 3000;
+    let minRent = 0;
+    let rentFilter = -1;
+
+    function handleRentEnter() {
+        console.log(rentValue)
+        // Store the current value of the rent slider
+        selectedRent = rentValue;
+        // Make rent slider disappear
+        rentValue = null;
+        console.log(selectedRent)
+    }
+
+
     import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
     import mapboxgl from 'mapbox-gl';
     // import { Map } from "mapbox-gl";
@@ -19,6 +36,9 @@
     lng = -71.06;
     lat = 42.315;
     zoom = 11;
+    // Define layerId as a reactive variable
+    let fillLayerId;
+    let lineLayerId;
 
     onMount(async () => {
         const initialState = { lng: lng, lat: lat, zoom: zoom };
@@ -36,6 +56,8 @@
             data: 'https://raw.githubusercontent.com/mktle/zoning-dashboard/main/svelte_fp2/data/geographic/Boston_Cambridge_rent.geojson'
         });
         
+        fillLayerId = 'boston_cambridge_rent';
+        lineLayerId = 'ineligible_region';
         map.addLayer({
             'id': 'boston_cambridge_rent',
             'source': 'Boston_Cambridge_Rent',
@@ -56,24 +78,15 @@
         });
     });
 
-    import Slider from './rent_slider.svelte';
-    let rentValue = 1500;
-    let selectedRent = 1500;
-    let maxRent = 3000;
-    let minRent = 0;
-    let rentFilter = -1;
-
     $: {
-        selectedRent = rentValue;
-    }
-
-    function handleRentEnter() {
-        console.log(rentValue)
-        // Store the current value of the rent slider
-        selectedRent = rentValue;
-        // Make rent slider disappear
-        rentValue = null;
-        console.log(selectedRent)
+        if (map && fillLayerId) {
+            map.setPaintProperty(fillLayerId, 'fill-color', [
+                'case',
+                ['>', ['get', 'avg_per_bed'], selectedRent],
+                'red',
+                'hsla(135, 100%, 45%, 0.38)'
+            ]);
+        }
     }
 
 </script>
