@@ -1,7 +1,7 @@
 <script>
 	// Parameters for the slider
 	export let rentValue = 1500;
-    export let maxRent = 3000;
+    export let maxRent = 2000;
     export let minRent = 0;
 
 </script>
