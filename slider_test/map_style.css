@@ -1,0 +1,44 @@
+body { 
+    margin: 0; 
+    padding: 0; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+#map { 
+    width: 50%;  /* or any specific width */
+    height: 75%; /* or any specific height */
+}
+
+#rent-distribution {
+    width: 30%;
+    height: 15px;
+    margin: 10 auto;
+    border: 1px solid #ccc;
+}
+
+#rent-slider{
+    width: 30%;
+    margin:10px auto;
+}
+
+.noUi-slider{
+    hegiht: 20px;
+    background-color: #eee
+}
+
+.noUi-handle{
+    width: 15px;
+    height: 20px;
+    cursor: grab;
+    background-color: #04AA6D;
+}
+
+.noUi-handle:hover {
+    background-color: #999;
+}
+
+.noUi-handle:active{
+    background-color: #666;
+}

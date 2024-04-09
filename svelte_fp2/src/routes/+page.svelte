@@ -21,13 +21,14 @@
         // Make rent slider disappear
         rentValue = null;
         console.log(selectedRent)
+        hasEntered = true
     }
 
 
     import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
     import mapboxgl from 'mapbox-gl';
     // import { Map } from "mapbox-gl";
-    import { onMount } from "svelte";
+    import { onMount, afterUpdate } from "svelte";
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXB0eXNpbmdlciIsImEiOiJjbHVoanlneWIycm14MmxvZTh2Y3VhYXFkIn0.lkhHKBe-C2_I9v2J-jJ2hg';
     const accessToken = 'pk.eyJ1IjoiZXB0eXNpbmdlciIsImEiOiJjbHVoanlneWIycm14MmxvZTh2Y3VhYXFkIn0.lkhHKBe-C2_I9v2J-jJ2hg';
     let map;
@@ -39,6 +40,7 @@
     // Define layerId as a reactive variable
     let fillLayerId;
     let lineLayerId;
+    let hasEntered = false
 
     onMount(async () => {
         const initialState = { lng: lng, lat: lat, zoom: zoom };
@@ -76,6 +78,23 @@
             },
             'layout': {},
         });
+
+        afterUpdate(() => {
+            if (map && fillLayerId && hasEntered) {
+                map.on('mouseenter', fillLayerId, (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+                    const neighborhood = e.features[0].properties.neighborhood;
+                    const avgRent = e.features[0].properties.avg_per_bed;
+                    // Show average rent per neighborhood
+                    console.log(`Neighborhood: ${neighborhood}, Avg Rent: ${avgRent}`);
+                });
+                // Reset cursor when mouse leaves the layer
+                map.on('mouseleave', fillLayerId, () => {
+                    map.getCanvas().style.cursor = '';
+                });
+            }
+        });
+
     });
 
     $: {
@@ -88,6 +107,27 @@
             ]);
         }
     }
+
+        // Show rent data when hovering over neighborhoods
+    // map.on('mouseenter', fillLayerId, function (e) {
+        // console.log("Hello")
+        // map.getCanvas().style.cursor = 'pointer';
+
+        // const features = map.queryRenderedFeatures(e.point, { layers: [fillLayerId] });
+        // if (!features.length) {
+        //     return;
+        // }
+
+        // const feature = features[0];
+        // const popup = new mapboxgl.Popup()
+        //     .setLngLat(e.lngLat)
+        //     .setHTML(`<h3>${feature.properties}</h3><p>Avg. rent per bedroom: ${feature.properties.avg_per_bed}</p>`)
+        //     .addTo(map);
+    // });
+
+    // map.on('mouseleave', fillLayerId, function () {
+    //     map.getCanvas().style.cursor = '';
+    // });
 
 </script>
 
